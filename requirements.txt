@@ -1,3 +1,4 @@
 happytransformer
 flask
 flask-cors
+pydantic
