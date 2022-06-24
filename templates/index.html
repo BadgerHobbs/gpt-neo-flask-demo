@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="overflow-hidden bg-gray-900 h-full">
+<body class="bg-gray-900 h-full">
     
     <section class="text-gray-400 body-font relative">
         <div class="container px-5 py-24 mx-auto">
@@ -40,7 +40,15 @@
                   <textarea id="result" name="result" placeholder="Result will be shown here..." class="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:bg-gray-900 focus:ring-2 focus:ring-indigo-900 h-80 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
                 </div>
               </div>
-              <div class="p-2 w-full pt-8 mt-8 border-t border-gray-800 text-center">
+              <div class="m-2 w-full my-4 border-t border-gray-800 text-center">
+              </div>
+
+              <!-- Settings -->
+              <div class="px-2 w-full">
+                <div class="relative">
+                  <label for="settings" class="leading-7 text-sm text-gray-400">Settings (JSON)</label>
+                  <textarea id="settings" name="settings" spellcheck="false" class="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:bg-gray-900 focus:ring-2 focus:ring-indigo-900 h-80 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
+                </div>
               </div>
             </div>
           </div>
@@ -48,6 +56,26 @@
       </section>
     
       <script>
+
+        function AddDefaultSettings()
+        {
+          let settings = {
+            min_length: 10, 
+            max_length: 50,
+            do_sample: true, // Default = false
+            early_stopping: false,
+            num_beams: 1,
+            temperature: 0.7, // Default = 1.0
+            top_k: 50,
+            no_repeat_ngram_size: 2, // Default = 0
+            top_p: 1.0,
+            bad_words: null,
+          }
+
+          document.getElementById("settings").value = JSON.stringify(settings, null, 2)
+        }
+
+        AddDefaultSettings();
 
         function Generate()
         {
@@ -70,8 +98,11 @@
             document.getElementById("generate-button").style.display = "none";
             document.getElementById("processing-button").style.display = "";
 
+            // Get settings as single url string
+            var settings = JSON.parse(document.getElementById("settings").value);
+
             // Make fetch request and return json result
-            fetch("/api/generate?prompt=" + prompt)
+            fetch("/api/generate?prompt=" + prompt + "&" + (new URLSearchParams(settings)).toString())
             .then(response => response.json())
             .then(data => {
                 result.value = prompt + data.text;

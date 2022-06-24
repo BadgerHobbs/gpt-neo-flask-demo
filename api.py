@@ -7,7 +7,6 @@ happy_gen = HappyGeneration("GPT-NEO", "EleutherAI/gpt-neo-1.3B")
 
 app = Flask(__name__)
 CORS(app)
-app.debug = True
 
 @app.route('/')
 def index():
@@ -19,11 +18,16 @@ def generate():
     # Get request arguments
     prompt = request.args.get('prompt')
 
-    # Default settings
-    default_settings = GENSettings(no_repeat_ngram_size=2, do_sample=True, early_stopping=False, top_k=50, temperature=0.7)
+    settings = request.args
+    
+    # Remove prompt from settings
+    settings.pop('prompt')
 
     # Generate text
-    text = happy_gen.generate_text(prompt, args=default_settings).text
+    text = happy_gen.generate_text(
+        prompt, 
+        args=GENSettings(**settings),
+    ).text
 
     # Return response
     return jsonify({
