@@ -13,9 +13,9 @@
         <div class="container px-5 py-24 mx-auto">
           <div class="flex flex-col text-center w-full mb-6">
             <h1 class="sm:text-4xl text-2xl font-medium title-font mb-4 text-white">GPT-Neo</h1>
-            <p class="w-2/5 mx-auto leading-relaxed text-base">An implementation of model & data parallel GPT3-like models using the mesh-tensorflow library, running in Python and hosted in Flask with Docker.</p>
+            <p class="w-[40rem] mx-auto leading-relaxed text-base">An implementation of model & data parallel GPT3-like models using the mesh-tensorflow library, running in Python and hosted in Flask with Docker.</p>
           </div>
-          <div class="w-2/5 mx-auto">
+          <div class="w-[40rem] mx-auto">
             <div class="flex flex-wrap -m-2">
               <div class="p-2 w-full">
                 <div class="relative">
@@ -48,6 +48,7 @@
                 <div class="relative">
                   <label for="settings" class="leading-7 text-sm text-gray-400">Settings (JSON)</label>
                   <textarea id="settings" name="settings" spellcheck="false" class="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:bg-gray-900 focus:ring-2 focus:ring-indigo-900 h-80 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
+                  <a href="https://happytransformer.com/text-generation/settings/" class="leading-7 text-sm text-blue-400" target="_blank">Documentation for Happy Transformer GPT-Neo settings</a>
                 </div>
               </div>
             </div>
@@ -56,6 +57,13 @@
       </section>
     
       <script>
+
+        // Get prompt from url
+        var url = new URL(window.location.href);
+        var prompt = url.searchParams.get("prompt");
+        if (prompt != null) {
+          document.getElementById("prompt").value = prompt;
+        }
 
         function AddDefaultSettings()
         {
@@ -94,21 +102,36 @@
 
                 return;
             }
+            else{
+              // Save prompt to url
+              var url = new URL(window.location.href);
+              url.searchParams.set("prompt", prompt);
+              window.history.replaceState({}, "", url.href);
+            }
 
             document.getElementById("generate-button").style.display = "none";
             document.getElementById("processing-button").style.display = "";
 
             // Get settings as single url string
             var settings = JSON.parse(document.getElementById("settings").value);
-
-            // Make fetch request and return json result
-            fetch("/api/generate?prompt=" + prompt + "&" + (new URLSearchParams(settings)).toString())
-            .then(response => response.json())
-            .then(data => {
-                result.value = prompt + data.text;
-                document.getElementById("generate-button").style.display = "";
-                document.getElementById("processing-button").style.display = "none";
-            });
+            
+            // Make post request with json data
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/api/generate", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Get json response
+                    let response_json = JSON.parse(xhr.responseText);
+                    result.value = response_json.prompt + response_json.text;
+                    document.getElementById("generate-button").style.display = "";
+                    document.getElementById("processing-button").style.display = "none";
+                }
+            };
+            xhr.send(JSON.stringify({
+                prompt: prompt,
+                settings: settings
+            }));
         }
 
       </script>
