@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
-from happytransformer import HappyGeneration
+from happytransformer import HappyGeneration, GENSettings
 
 happy_gen = HappyGeneration("GPT-NEO", "EleutherAI/gpt-neo-1.3B")
 
@@ -19,8 +19,11 @@ def generate():
     # Get request arguments
     prompt = request.args.get('prompt')
 
+    # Default settings
+    default_settings = GENSettings(no_repeat_ngram_size=2, do_sample=True, early_stopping=False, top_k=50, temperature=0.7)
+
     # Generate text
-    text = happy_gen.generate_text(prompt).text
+    text = happy_gen.generate_text(prompt, args=default_settings).text
 
     # Return response
     return jsonify({
