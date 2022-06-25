@@ -5,6 +5,15 @@
     <title>GPT-Neo</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+
+      input[type="radio"]:focus {
+          outline: none;
+          box-shadow: none; 
+      }
+
+    </style>
 </head>
 
 <body class="bg-gray-900 h-full">
@@ -32,7 +41,7 @@
                     Processing...
                 </button>
               </div>
-              <div id="alert" style="display: none;" class="text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800 m-2 p-1 text-center w-full" role="alert">
+              <div id="alert" style="display: none;" class="text-sm text-red-700 bg-red-100 rounded-lg bg-red-200 text-red-800 m-2 p-1 text-center w-full" role="alert">
                 <span class="font-medium">Error: </span>Please enter a non-empty prompt.
               </div>
               <div class="p-2 w-full">
@@ -45,8 +54,42 @@
 
               <!-- Settings -->
               <div class="px-2 w-full">
+
                 <div class="relative">
-                  <label for="settings" class="leading-7 text-sm text-gray-400">Settings (JSON)</label>
+                  <label for="settings" class="leading-7 text-sm text-gray-400">Selected Model (JSON)</label>
+                  <div class="p4 flex flex-col flex-wrap h-[3rem]">
+                    <div class="flex items-center mr-4">
+                        <input checked id="inline-radio" type="radio" value="gpt2" name="inline-radio-group" class="w-4 h-4 text-blue-600 focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                        <label for="inline-radio" class="ml-2 text-sm font-medium text-gray-900 text-gray-300">GPT-2</label>
+                    </div>
+                    <div class="flex items-center mr-4">
+                        <input id="inline-radio" type="radio" value="gpt2-large" name="inline-radio-group" class="w-4 h-4 text-blue-600 focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                        <label for="inline-radio" class="ml-2 text-sm font-medium text-gray-900 text-gray-300">GPT-2 Large</label>
+                    </div>
+                    <div class="flex items-center mr-4">
+                        <input id="inline-radio" type="radio" value="gpt2-xl" name="inline-radio-group" class="w-4 h-4 text-blue-600 focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                        <label for="inline-radio" class="ml-2 text-sm font-medium text-gray-900 text-gray-300">GPT-2 XL</label>
+                    </div>
+                    <div class="flex items-center mr-4">
+                        <input id="inline-radio" type="radio" value="gpt2-distil" name="inline-radio-group" class="w-4 h-4 text-blue-600 focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                        <label for="inline-radio" class="ml-2 text-sm font-medium text-gray-900 text-gray-300">GPT-2 Distil</label>
+                    </div>
+                    <div class="flex items-center mr-4">
+                        <input id="inline-radio" type="radio" value="gpt-neo-125m" name="inline-radio-group" class="w-4 h-4 text-blue-600 focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                        <label for="inline-radio" class="ml-2 text-sm font-medium text-gray-900 text-gray-300">GPT-Neo 125m</label>
+                    </div>
+                    <div class="flex items-center mr-4">
+                        <input id="inline-radio" type="radio" value="gpt-neo-1.3B" name="inline-radio-group" class="w-4 h-4 text-blue-600 focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                        <label for="inline-radio" class="ml-2 text-sm font-medium text-gray-900 text-gray-300">GPT-Neo 1.3B</label>
+                    </div>
+                    <div class="flex items-center mr-4">
+                        <input id="inline-radio" type="radio" value="gpt2-academic" name="inline-radio-group" class="w-4 h-4 text-blue-600 focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                        <label for="inline-radio" class="ml-2 text-sm font-medium text-gray-900 text-gray-300">GPT-2 Academic</label>
+                    </div>
+                </div>
+                </div>
+                <div class="relative">
+                  <label for="settings" class="leading-7 text-sm text-gray-400">Model Configuration (JSON)</label>
                   <textarea id="settings" name="settings" spellcheck="false" class="w-full bg-gray-800 bg-opacity-40 rounded border border-gray-700 focus:border-indigo-500 focus:bg-gray-900 focus:ring-2 focus:ring-indigo-900 h-80 text-base outline-none text-gray-100 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
                   <a href="https://happytransformer.com/text-generation/settings/" class="leading-7 text-sm text-blue-400" target="_blank">Documentation for Happy Transformer GPT-Neo settings</a>
                 </div>
@@ -114,6 +157,9 @@
 
             // Get settings as single url string
             var settings = JSON.parse(document.getElementById("settings").value);
+
+            // Get model from radio buttons
+            var model = document.querySelector('input[name="inline-radio-group"]:checked').value;
             
             // Make post request with json data
             var xhr = new XMLHttpRequest();
@@ -130,6 +176,7 @@
             };
             xhr.send(JSON.stringify({
                 prompt: prompt,
+                model: model,
                 settings: settings
             }));
         }

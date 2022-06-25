@@ -4,7 +4,15 @@ import pydantic
 from typing import Optional, List
 from happytransformer import HappyGeneration, GENSettings
 
-happy_gen = HappyGeneration("GPT-NEO", "EleutherAI/gpt-neo-1.3B")
+models = {
+    'gpt2': HappyGeneration("GPT2", "gpt2"),
+    'gpt2-large': HappyGeneration("GPT2", "gpt2-large"), 
+    'gpt2-xl': HappyGeneration("GPT2", "gpt2-xl"),
+    'gpt2-distil': HappyGeneration("GPT2", "distilgpt2"),
+    'gpt-neo-125m': HappyGeneration("GPT", "EleutherAI/gpt-neo-125m"),
+    'gpt-neo-1.3B': HappyGeneration("GPT-NEO", "EleutherAI/gpt-neo-1.3B"),
+    'gpt2-academic': HappyGeneration("GPT2", "brennan-richards/gpt2-finetuned-academic-topics"),
+}
 
 app = Flask(__name__)
 CORS(app)
@@ -39,8 +47,11 @@ def generate():
     # Convert settings to Settings model
     settings = Settings(**data.get('settings'))
 
+    # Get selected model
+    model = models[data.get('model')]
+
     # Generate text
-    text = happy_gen.generate_text(
+    text = model.generate_text(
         prompt, 
         args=GENSettings(**settings.dict()),
     ).text
