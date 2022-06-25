@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import pydantic
@@ -5,14 +6,24 @@ from typing import Optional, List
 from happytransformer import HappyGeneration, GENSettings
 
 models = {
-    'gpt2': HappyGeneration("GPT2", "gpt2"),
-    'gpt2-large': HappyGeneration("GPT2", "gpt2-large"), 
-    'gpt2-xl': HappyGeneration("GPT2", "gpt2-xl"),
-    'gpt2-distil': HappyGeneration("GPT2", "distilgpt2"),
-    'gpt-neo-125m': HappyGeneration("GPT", "EleutherAI/gpt-neo-125m"),
-    'gpt-neo-1.3B': HappyGeneration("GPT-NEO", "EleutherAI/gpt-neo-1.3B"),
-    'gpt2-academic': HappyGeneration("GPT2", "brennan-richards/gpt2-finetuned-academic-topics"),
+    'gpt2': ("GPT2", "gpt2"),
+    'gpt2-large': ("GPT2", "gpt2-large"), 
+    'gpt2-xl': ("GPT2", "gpt2-xl"),
+    'gpt2-distil': ("GPT2", "distilgpt2"),
+    'gpt-neo-125m': ("GPT-NEO", "EleutherAI/gpt-neo-125M"),
+    'gpt-neo-1.3B': ("GPT-NEO", "EleutherAI/gpt-neo-1.3B"),
 }
+
+selected_models = os.getenv('MODELS', 'gpt2').split(',')
+
+for model in selected_models:
+    if models.get(model):
+        print(f'Loading {model}...')
+        models[model] = HappyGeneration(
+            model_type=models[model][0], 
+            model_name=models[model][1],
+            use_auth_token=os.getenv('AUTH_TOKEN'),
+        )
 
 app = Flask(__name__)
 CORS(app)
@@ -20,6 +31,10 @@ CORS(app)
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/api/supported-models')
+def supported_models():
+    return jsonify(selected_models)
 
 @app.route('/api/generate', methods=['POST'])
 def generate():

@@ -5,5 +5,4 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python3"]
-CMD ["api.py"]
+CMD python -u ./api.py
