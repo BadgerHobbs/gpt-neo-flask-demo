@@ -6,9 +6,10 @@ A simple flask website for demoing GPT-Neo.
 
 ```bash
 docker build -t gpt-neo-flask-demo .
-docker run \
+docker run -d \
     --name gpt-neo-flask-demo \
     -p 5000:5000 \
     --restart on-failure \
+    -v /path/for/cache:/.cache/huggingface/transformers \
     gpt-neo-flask-demo
 ```
