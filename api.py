@@ -7,6 +7,7 @@ from happytransformer import HappyGeneration, GENSettings
 
 models = {
     'gpt2': ("GPT2", "gpt2"),
+    'gpt2-medium': ("GPT2", "gpt2-medium"), 
     'gpt2-large': ("GPT2", "gpt2-large"), 
     'gpt2-xl': ("GPT2", "gpt2-xl"),
     'gpt2-distil': ("GPT2", "distilgpt2"),
