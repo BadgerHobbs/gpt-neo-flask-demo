@@ -12,6 +12,7 @@ models = {
     'gpt2-xl': ("GPT2", "gpt2-xl"),
     'gpt2-distil': ("GPT2", "distilgpt2"),
     'gpt-neo-125m': ("GPT-NEO", "EleutherAI/gpt-neo-125M"),
+    'gpt-neo-350m': ("GPT-NEO", "xhyi/PT_GPTNEO350_ATG"),
     'gpt-neo-1.3B': ("GPT-NEO", "EleutherAI/gpt-neo-1.3B"),
     'xlnet-base-cased': ("XLNet", "xlnet-base-cased"),
     'xlnet-large-cased': ("XLNet", "xlnet-large-cased"),
